@@ -35,7 +35,7 @@ php artisan test
 1. Для запуска приложения необходимы Docker и Docker Compose.
 2. Клонируйте репозиторий:
 ```bash
-git clone git
+git clone git@github.com:hckmcc/test-user-api.git
 ```
 3.  Настройте файл `.env`:
 
