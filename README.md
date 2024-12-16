@@ -54,7 +54,8 @@ MYSQL_DATABASE=mydb
 ```
 4. Запустите сервер:
 ```bash
-docker compose up --build
+docker compose build
+docker compose up -d
 ```
 5. Перейдите в контейнер php-fpm:
 
