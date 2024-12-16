@@ -24,14 +24,19 @@ class UserService
      */
     public function getUsers(IndexDTO $dto): LengthAwarePaginator
     {
-        $query = User::query();
+        try{
+            $query = User::query();
 
-        if ($dto->name) {
-            $query->where('name', 'like', '%' . $dto->name . '%');
+            if ($dto->name) {
+                $query->where('name', 'like', '%' . $dto->name . '%');
+            }
+
+            return $query->orderBy($dto->sortField, $dto->sortDirection)
+                ->paginate($dto->perPage);
+        } catch (\Exception $e) {
+            Log::error('Error fetching users: ' . $e->getMessage());
+            throw $e;
         }
-
-        return $query->orderBy($dto->sortField, $dto->sortDirection)
-            ->paginate($dto->perPage);
     }
 
     /**
@@ -42,12 +47,17 @@ class UserService
      */
     public function createUser(CreateUserDTO $dto): User
     {
-        return User::create([
-            'name' => $dto->name,
-            'password' => Hash::make($dto->password),
-            'ip' => $dto->ip,
-            'comment' => $dto->comment
-        ]);
+        try{
+            return User::create([
+                'name' => $dto->name,
+                'password' => Hash::make($dto->password),
+                'ip' => $dto->ip,
+                'comment' => $dto->comment
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error creating user: ' . $e->getMessage());
+            throw $e;
+        }
     }
 
     /**
@@ -59,14 +69,19 @@ class UserService
      */
     public function updateUser(User $user, UpdateUserDTO $dto): User
     {
-        $data = $dto->toArray();
+        try{
+            $data = $dto->toArray();
 
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
+            if (isset($data['password'])) {
+                $data['password'] = Hash::make($data['password']);
+            }
+
+            $user->update($data);
+            return $user;
+        } catch (\Exception $e) {
+            Log::error('Error updating user: ' . $e->getMessage());
+            throw $e;
         }
-
-        $user->update($data);
-        return $user;
     }
 
     /**
